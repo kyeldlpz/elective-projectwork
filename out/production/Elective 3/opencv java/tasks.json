@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "javac",
+      "args": [
+        "-cp", "lib/opencv-4110.jar",
+        "src/Smoothing.java"
+      ],
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

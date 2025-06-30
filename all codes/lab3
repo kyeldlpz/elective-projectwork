@@ -1,0 +1,111 @@
+import org.opencv.core.*; 
+import org.opencv.imgcodecs.Imgcodecs; 
+import org.opencv.imgproc.Imgproc; 
+ 
+import javax.swing.*; 
+import java.awt.*; 
+import java.awt.image.BufferedImage; 
+import java.awt.image.DataBufferByte; 
+ 
+public class Lab3 { 
+    static { 
+        System.load("C:\\Users\\jasmi\\Downloads\\opencv\\build\\java\\x64\\opencv_java4110.dll"); 
+    } 
+ 
+    public static void main(String[] args) { 
+        Mat src = Imgcodecs.imread("picture.jpg"); 
+        if (src.empty()) { 
+            System.out.println("Image not found."); 
+            return; 
+        } 
+ 
+        int k = 9; 
+ 
+        Mat blur = new Mat(); 
+        Mat gaussian = new Mat(); 
+        Mat median = new Mat(); 
+        Mat bilateral = new Mat(); 
+ 
+        Imgproc.blur(src, blur, new Size(k, k)); 
+        Imgproc.GaussianBlur(src, gaussian, new Size(k, k), 0); 
+        Imgproc.medianBlur(src, median, k); 
+        Imgproc.bilateralFilter(src, bilateral, k, k * 2, k / 2); 
+ 
+        int thumbWidth = 200; 
+ 
+        BufferedImage originalImg = resizePreserveAspect(matToBufferedImage(src), thumbWidth); 
+        BufferedImage blurImg = resizePreserveAspect(matToBufferedImage(blur), thumbWidth); 
+        BufferedImage gaussianImg = resizePreserveAspect(matToBufferedImage(gaussian), thumbWidth); 
+        BufferedImage medianImg = resizePreserveAspect(matToBufferedImage(median), thumbWidth); 
+        BufferedImage bilateralImg = resizePreserveAspect(matToBufferedImage(bilateral), thumbWidth); 
+ 
+        showCombinedImages( 
+                new BufferedImage[]{originalImg, blurImg, gaussianImg, medianImg, bilateralImg}, 
+                new String[]{"Original", "Homogeneous Blur", "Gaussian Blur", "Median Blur", "Bilateral Filter"} 
+        ); 
+    } 
+ 
+ 
+  
+public static BufferedImage matToBufferedImage(Mat mat) { 
+        int type = BufferedImage.TYPE_3BYTE_BGR; 
+        if (mat.channels() == 1) { 
+            type = BufferedImage.TYPE_BYTE_GRAY; 
+        } 
+        byte[] buffer = new byte[(int) (mat.total() * mat.channels())]; 
+        mat.get(0, 0, buffer); 
+        BufferedImage image = new BufferedImage(mat.cols(), mat.rows(), type); 
+        final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData(); 
+        System.arraycopy(buffer, 0, targetPixels, 0, buffer.length); 
+        return image; 
+    } 
+ 
+    // Resize image 
+    public static BufferedImage resizePreserveAspect(BufferedImage original, int newWidth) { 
+        int origWidth = original.getWidth(); 
+        int origHeight = original.getHeight(); 
+        double ratio = (double) newWidth / origWidth; 
+        int newHeight = (int) (origHeight * ratio); 
+ 
+        Image tmp = original.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH); 
+        BufferedImage resized = new BufferedImage(newWidth, newHeight, original.getType()); 
+        Graphics2D g2d = resized.createGraphics(); 
+        g2d.drawImage(tmp, 0, 0, null); 
+        g2d.dispose(); 
+        return resized; 
+    } 
+ 
+    // Display all images in one window with labels 
+    public static void showCombinedImages(BufferedImage[] images, String[] titles) { 
+        int spacing = 20; 
+        int labelHeight = 20; 
+        int totalWidth = 0; 
+        int maxHeight = 0; 
+ 
+        for (BufferedImage img : images) { 
+            totalWidth += img.getWidth() + spacing; 
+            maxHeight = Math.max(maxHeight, img.getHeight()); 
+        } 
+ 
+        BufferedImage combined = new BufferedImage(totalWidth, maxHeight + labelHeight + 10, 
+BufferedImage.TYPE_3BYTE_BGR); 
+        Graphics g = combined.getGraphics(); 
+        g.setColor(Color.WHITE); 
+        g.fillRect(0, 0, combined.getWidth(), combined.getHeight()); 
+ 
+        g.setFont(new Font("Arial", Font.BOLD, 14)); 
+        g.setColor(Color.BLACK); 
+ 
+int x = 0; 
+for (int i = 0; i < images.length; i++) { 
+g.drawImage(images[i], x, labelHeight, null); 
+g.drawString(titles[i], x + 10, 15); 
+x += images[i].getWidth() + spacing; 
+} 
+JFrame frame = new JFrame("Filtered Outputs (Scaled)"); 
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+frame.setSize(combined.getWidth(), combined.getHeight() + 40); 
+frame.add(new JLabel(new ImageIcon(combined))); 
+frame.setVisible(true); 
+} 
+} 

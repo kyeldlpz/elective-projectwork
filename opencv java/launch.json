@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch Smoothing",
+      "request": "launch",
+      "mainClass": "Smoothing",
+      "cwd": "${workspaceFolder}/src",
+      "vmArgs": "-Djava.library.path=../native -cp ../lib/opencv-4110.jar;."
+    }
+  ]
+}

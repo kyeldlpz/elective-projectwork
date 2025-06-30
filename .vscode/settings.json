@@ -1,0 +1,13 @@
+{
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.project.sourcePaths": [
+        ".",
+        "Lab 1 Final",
+        "Lab2 Final",
+        "opencv java"
+    ],
+    "java.project.referencedLibraries": [
+        "opencv java\\opencv-4110.jar",
+        "c:\\Users\\DELL\\Documents\\PLM Files\\4th Year\\Midyear - 3rd Year\\Elective 3\\opencv java\\opencv-4110_1.jar"
+    ]
+}
