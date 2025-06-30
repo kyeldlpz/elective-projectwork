@@ -8,7 +8,7 @@ img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 # Set kernel size
 k = 9
 
-# Apply filters
+# Applying the filters
 homogeneous = cv2.blur(img_rgb, (k, k))
 gaussian = cv2.GaussianBlur(img_rgb, (k, k), 0)
 median = cv2.medianBlur(img_rgb, k)
